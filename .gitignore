@@ -4,3 +4,8 @@ data-generation/
 logfile/
 prev_result/
 nohup.out
+prev_configfile/
+error_log
+*.csv
+*.txt
+

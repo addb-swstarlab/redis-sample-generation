@@ -3,11 +3,19 @@ import os
 from params import *
 
 
-def determine_dict(params_aof, params_rdb, params_activedefrag, params_etc, params_dict):
-
+def determine_dict(params_aof, params_rdb, params_activedefrag, params_etc, params_dict, mode, idx):
     params_dict = params_etc.copy()
     # print(f"params_etc={params_etc}\n")
-    persis_choice = random.choice(['aof', 'rdb'])  ## random choice persistence
+    '''
+        idx = config index
+        1 ~ 10000 : AOF
+        10001 ~ 20000 : RDB
+    '''
+    if idx < count_file/2:
+        persis_choice = 'aof'
+    else:
+        persis_choice = 'rdb'
+    # persis_choice = random.choice(['aof', 'rdb'])  ## random choice persistence
     # print('persis_choice=', persis_choice)
     if persis_choice == 'aof':  ## chocie AOF
         # print('this is aof')
@@ -33,6 +41,11 @@ def determine_dict(params_aof, params_rdb, params_activedefrag, params_etc, para
         params_activedefrag['activedefrag'][2] = 'yes'
         params_dict.update(params_activedefrag)
 
+    if mode == "light":
+        params_dict.update(light_params_maxmemory)
+    elif mode == "heavy":
+        params_dict.update(heavy_params_maxmemory)
+
     return params_dict
 
 
@@ -48,7 +61,7 @@ def random_choice(dict):
             list[2] = random.choice(list[1])
         elif list[0] == "categorical":
             list[2] = random.choice(list[1])
-        elif list[0] == "numerical_categorical":
+        elif list[0] == "numerical":
            list[2] = random.choice(list[1])
         elif list[0] == 'numerical_range':
             list[2] = str(random.randint(list[1][0], list[1][1]))
@@ -65,7 +78,7 @@ def config_generator(conf_file, dict):
             conf_file += ("\n" + name + " " + list[2])
         elif list[0] == 'categorical':
             conf_file += ("\n" + name + " " + list[2])
-        elif list[0] == 'numerical_categorical':
+        elif list[0] == 'numerical':
             conf_file += ("\n" + name + " " + list[2])
         elif list[0] == 'numerical_range':
             conf_file += ("\n" + name + " " + list[2])
@@ -85,6 +98,8 @@ def index_size(index):
   return index_value
 
 def file_generator(filename, dir, filecontent, fileextension):
+    if not os.path.exists(dir):
+        os.mkdir(dir)
     f = open(dir + filename + "." + fileextension, 'w')
     f.write(filecontent)
     f.close()
