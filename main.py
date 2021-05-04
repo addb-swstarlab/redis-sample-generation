@@ -4,7 +4,6 @@ from params import *
 import argparse
 import os, subprocess
 
-<<<<<<< HEAD
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", type=str, choices=['light','heavy'], default = 'light', help='diff workload request')
 
@@ -12,10 +11,6 @@ args = parser.parse_args()
 
 def main():
 
-=======
-def main():
-
->>>>>>> b849812c352762e614922a16c23efc78dd8c2930
     # original conf file copy
     init_config = ""
 
