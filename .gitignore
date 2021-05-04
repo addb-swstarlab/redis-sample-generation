@@ -1,0 +1,6 @@
+__pycache__/
+configfile/
+data-generation/
+logfile/
+prev_result/
+nohup.out
