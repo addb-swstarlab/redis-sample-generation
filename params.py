@@ -6,7 +6,7 @@ except:
     import numpy as np
 
 instance_count = 1
-count_file = 10 # 20000
+count_file = 20000
 range_start = 1
 range_end = count_file + 1
 # range_start = instance_count * count_file + 1 # 0 * 6250 + 1 = 1
