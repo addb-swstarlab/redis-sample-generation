@@ -1,6 +1,8 @@
 from func import *
 from metrics import *
 from params import *
+
+import time
 import argparse
 import os, subprocess
 
@@ -11,19 +13,19 @@ args = parser.parse_args()
 
 def main():
 
-    # original conf file copy
-    init_config = ""
+    # # original conf file copy
+    # init_config = ""
 
-    # readline_all.py
-    f = open("init_config.conf", 'r')
-    while True:
-        line = f.readline()
-        if not line: break
-        init_config += line
-    f.close()
+    # # readline_all.py
+    # f = open("init_config.conf", 'r')
+    # while True:
+    #     line = f.readline()
+    #     if not line: break
+    #     init_config += line
+    # f.close()
 
 
-    config_list = [init_config for _ in range(count_file)]
+    # config_list = [init_config for _ in range(count_file)]
 
     # for i in range(count_file):
     #     params_dict = {}
@@ -78,8 +80,10 @@ def main():
         connect_redis = ['/home/jieun/redis-5.0.2/src/redis-server','configfile/config{}.conf'.format(str(i))]
         fd_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE).stdout
 
+        time.sleep(5)
+
         # memtier_benchmark 실행
-        cmd = ['/home/jieun/memtier_benchmark/memtier_benchmark', '--request=1000', '--clients=1', '--thread=1', '--data-size=128', '--key-minimum=10000000', '--key-maximum=99999999', '--ratio=1:1']
+        cmd = ['/home/jieun/memtier_benchmark/memtier_benchmark', '--request=200000', '--clients=1', '--thread=5', '--data-size=64', '--key-minimum=10000000', '--key-maximum=99999999', '--ratio=4:1']
         fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
 
         external_data = []
@@ -92,10 +96,6 @@ def main():
 
         ResultMetricsValue_GeneratorFile(external_list, external_metrics_list, ex_f)
         print(f"---saving {str(i)}th sample results on result_external_{str(instance_count)}")
-
-        # # 캐시 비우기
-        cmd = ['sudo', 'echo', '3', '>', '/proc/sys/vm/drop_caches']
-        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
 
         # "redis-cli info" excute
         cmd = ['/home/jieun/redis-5.0.2/src/redis-cli', 'info'] 
@@ -114,12 +114,20 @@ def main():
         ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
         print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
         
-        
+        time.sleep(5)
+
         os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
+
+        # # 캐시 비우기
+        cmd = ['sudo', 'echo', '3', '>', '/proc/sys/vm/drop_caches']
+        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
+        time.sleep(3)
+
         os.system("rm -rf /home/jieun/redis-logs/appendonly.aof")
         os.system("rm -rf /home/jieun/redis-logs/dump.rdb")
         os.system("rm -rf /home/jieun/redis-logs/temp*")
 
+        time.sleep(5)
 
 if __name__ == '__main__':
     try:

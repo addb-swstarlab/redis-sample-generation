@@ -5,7 +5,7 @@ except:
     os.system("pip3 install --user numpy")
     import numpy as np
 
-instance_count = 1
+instance_count = 2
 count_file = 20000
 range_start = 1
 range_end = count_file + 1
@@ -15,8 +15,8 @@ range_end = count_file + 1
 params_aof = {
     "appendonly": ["boolean", ["yes", "no"], None],
     "appendfsync": ["categorical", ['always', 'everysec', 'no'], None],
-    "auto-aof-rewrite-percentage": ["numerical", [str(i) for i in range(50,301)], None],
-    "auto-aof-rewrite-min-size": ['numerical', ['{}mb'.format(i) for i in range(32,513)], None],
+    "auto-aof-rewrite-percentage": ["numerical", [str(i) for i in range(50,201)], None],
+    "auto-aof-rewrite-min-size": ['numerical', ['{}mb'.format(i) for i in range(16,257)], None],
     "no-appendfsync-on-rewrite": ['boolean', ['yes', 'no'], None],
     "aof-rewrite-incremental-fsync": ['boolean', ['yes', 'no'], None],
     "aof-use-rdb-preamble": ['boolean', ['yes', 'no'], None]
@@ -27,7 +27,7 @@ params_rdb = {
     "save": ['numerical', [3,
                                 [[str(i) for i in range(700,1101)],[str(i) for i in range(1,10)]],
                                 [[str(i) for i in range(100,501)],[str(i) for i in range(10,101)]],
-                                [[str(i) for i in range(30,91)],[str(i) for i in range(8000,12501)]]], []],
+                                [[str(i) for i in range(30,91)],[str(i) for i in range(8000,12001)]]], []],
     "rdbcompression": ['boolean', ['yes', 'no'], None],
     "rdbchecksum": ['boolean', ['yes', 'no'], None],
     "rdb-save-incremental-fsync": ['boolean', ['yes', 'no'], None]
@@ -42,10 +42,10 @@ params_activedefrag = {
 }
 
 heavy_params_maxmemory = {
-    "maxmemory": ['numerical', ['{}gb'.format(round(i,1)) for i in np.arange(2.5,5.0,0.1)],None],
+    "maxmemory": ['numerical', ['{}gb'.format(round(i,1)) for i in np.arange(1.0,3.0,0.1)],None],
     "maxmemory-policy": ["categorical", ["volatile-lru", "allkeys-lru", "volatile-lfu", "allkeys-lfu", "volatile-random",
                                          "allkeys-random", "volatile-ttl", "noeviction"], None],
-    "maxmemory-samples": ['numerical', [str(i) for i in range(1,21)], None],
+    "maxmemory-samples": ['numerical', [str(i) for i in range(3,8)], None],
     "lazyfree-lazy-eviction": ["boolean", ["yes", "no"], None],
     "lazyfree-lazy-expire": ["boolean", ["yes", "no"], None],
     "lazyfree-lazy-server-del": ["boolean", ["yes", "no"], None],
@@ -65,10 +65,10 @@ params_etc = {
     # "lazyfree-lazy-eviction": ['boolean', ['yes', 'no'], None],
     # "lazyfree-lazy-expire": ['boolean', ['yes', 'no'], None],
     # "lazyfree-lazy-server-del": ['boolean', ['yes', 'no'], None],
-    "hash-max-ziplist-entries": ['numerical', [str(i) for i in range(128,1025)], None],
+    "hash-max-ziplist-entries": ['numerical', [str(i) for i in range(256,751)], None],
     "hash-max-ziplist-value": ['numerical', [str(i) for i in range(16,257)], None],
     "activerehashing": ['boolean', ['yes', 'no'], None],
-    "hz": ['numerical', [str(i) for i in range(1,101)], None]
-    # "dynamic-hz": ['boolean', ['yes', 'no'], None]
+    "hz": ['numerical', [str(i) for i in range(1,41)], None],
+    "dynamic-hz": ['boolean', ['yes', 'no'], None]
 }
 
