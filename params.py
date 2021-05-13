@@ -4,9 +4,10 @@ try:
 except:
     os.system("pip3 install --user numpy")
     import numpy as np
+import socket
 
-instance_count = 2
-count_file = 20000
+instance_count = int(socket.gethostname().split('-')[-1])
+count_file = 10000
 range_start = 1
 range_end = count_file + 1
 # range_start = instance_count * count_file + 1 # 0 * 6250 + 1 = 1

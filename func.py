@@ -124,17 +124,16 @@ def ResultMetricsValue_GeneratorFile(result_list, metrics_list, f):
         f.write(','+result_list[i])
     f.write('\n')
 
-
 def ExternalMetrics_IntoList(external_data):
     external_list = []
 
     for data in external_data:
         data = data.decode('utf-8')
-        list = data.split(' ')
-        list = ' '.join(list).split()
+        list_ = data.split(' ')
+        list_ = ' '.join(list_).split()
     
-        for i in range(1, 6):  # list = ['Sets', , , ...]
-            external_list.append(list[i]) # 문자열
+        for i in range(1, len(list_)):  # list = ['Sets', , , ...]
+            external_list.append(list_[i]) # 문자열
 
     external_list = [i.replace('---','') for i in external_list]
     
@@ -165,3 +164,39 @@ def InternalMetrics_IntoDict(internal_data):
     
     return dict 
 
+def parsingExternalData(outputs):
+    if len(outputs) == 0:
+        return ['0']*32
+    parsedOutput = outputs.decode('utf-8').split("\n")
+
+    First = True
+    save = False
+    external_data = []
+    for po in parsedOutput:
+        if po.startswith("-"):
+            if First:
+                save = True
+                First = False
+                continue
+            else:
+                save =False
+                break
+        if save:
+            try:
+                datas = po.split()
+                if datas[0] == "Sets":
+                    external_data.extend(datas[1:])
+                elif datas[0] == "Gets":
+                    external_data.extend(datas[1:])
+                elif datas[0] == "Waits":
+                    external_data.extend(datas[1:])
+                elif datas[0] == "Totals":
+                    external_data.extend(datas[1:])
+            except:
+                external_list = [i.replace('---','') for i in external_data]
+
+    return external_list
+
+
+    
+    
