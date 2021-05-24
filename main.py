@@ -42,7 +42,7 @@ def main():
         in_rf.close()
         ex_rf.close()
 
-    nf = open(args.persistence+"_nan_log.txt",MODE)
+    nf = open(args.persistence + "_nan_log.txt",MODE)
     in_f = open(RESULT_INTERNAL_FILE, MODE)
     ex_f = open(RESULT_EXTERNAL_FILE, MODE)
 
@@ -83,23 +83,26 @@ def main():
 
         if not memtier_results:
             nf.write(str(i)+'\n')
+            internal_list = ['0'] * len(internal_metrics_list)
+            ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
+            print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
+        else:
+            # "redis-cli info" excute
+            cmd = ['/home/jieun/redis-5.0.2/src/redis-cli', 'info'] 
+            fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
+            data = fd_popen.readlines() 
 
-        # "redis-cli info" excute
-        cmd = ['/home/jieun/redis-5.0.2/src/redis-cli', 'info'] 
-        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
-        data = fd_popen.readlines() 
+            internal_dict = InternalMetrics_IntoDict(data)
+            internal_list = []
 
-        internal_dict = InternalMetrics_IntoDict(data)
-        internal_list = []
-
-        for metric in internal_metrics_list:
-            if metric in internal_dict:
-                internal_list.append(internal_dict[metric])
-            else:
-                internal_list.append("")
-        
-        ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
-        print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
+            for metric in internal_metrics_list:
+                if metric in internal_dict:
+                    internal_list.append(internal_dict[metric])
+                else:
+                    internal_list.append("")
+            
+            ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
+            print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
 
         os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
 
