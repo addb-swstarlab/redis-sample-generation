@@ -61,7 +61,7 @@ def main():
     for i in range(range_start_, range_end):
         #redis 서버 실행
         connect_redis = ['/home/jieun/redis-5.0.2/src/redis-server','configfile/config{}.conf'.format(str(i))]
-        fd_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
+        server_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
 
         time.sleep(5)
         # memtier_benchmark 실행
@@ -104,7 +104,10 @@ def main():
             ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
 
-        os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
+        if memtier_results:
+            os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
+        else:
+            server_popen.kill()
 
         # # 캐시 비우기
         cmd = ['sudo', 'echo', '3', '>', '/proc/sys/vm/drop_caches']
