@@ -7,4 +7,5 @@ prev_configfile/
 error_log
 *.csv
 *.txt
-
+configfile2/
+check.py

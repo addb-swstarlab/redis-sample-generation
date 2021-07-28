@@ -20,7 +20,7 @@ while True:
     init_config += line
 f.close()
 
-
+count_file=2000
 config_list = [init_config for _ in range(count_file)]
 
 for i in range(count_file):
@@ -28,10 +28,10 @@ for i in range(count_file):
     params_dict = determine_dict(params_aof,params_rdb, params_activedefrag, 
                                 params_etc, params_dict,args.mode, i)
     # print(f"i={i}\n params_dict={params_dict}\n")
-    config_list[i] = config_generator(config_list[i], random_choice(params_dict))
+    config_list[i] = config_generator(config_list[i], random_choice(params_dict),args.mode)
     # config_list[i] += "\nlogfile "+"'./logfile/logfile"+"%s'" %index_size(i)
     
 # conf file generate step
 for i in range(count_file):
-    index = range(range_start, range_end)
-    file_generator("config" + str(index[i]), './configfile/',config_list[i], "conf")
+    index = range(1, 2001)
+    file_generator("config" + str(index[i]), './configfile2/',config_list[i], "conf")

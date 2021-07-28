@@ -12,6 +12,7 @@ import os, subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", type=str, choices=['light','heavy'], default = 'light', help='diff workload request')
 parser.add_argument("--persistence", type=str, choices=['aof','rdb'], default = 'aof', help='Redis persistence')
+parser.add_argument("--w", type=int, help='# workload')
 
 args = parser.parse_args()
 
@@ -22,6 +23,7 @@ if args.persistence == 'rdb':
 
 
 def main():
+    instance_count = args.w
     RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_" + str(instance_count)+".csv"
     RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_" + str(instance_count)+".csv"
     MODE = "w"
@@ -57,14 +59,14 @@ def main():
         ResultMetricsName_GeneratorFile(external_metrics_list, ex_f)
 
     range_start_ = range_start + FILE_LENGTH - 1
-
+    first = True
     for i in range(range_start_, range_end):
-        #redis 서버 실행
-        connect_redis = ['/home/jieun/redis-5.0.2/src/redis-server','configfile/config{}.conf'.format(str(i))]
+        #redis execute
+        connect_redis = ['../redis-5.0.2/redis/src/redis-server','configfile/config{}.conf'.format(str(i))]
         server_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
 
         time.sleep(5)
-        # memtier_benchmark 실행
+        # memtier_benchmark execute
         cmd = dict_cmd[instance_count]
         fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
@@ -88,7 +90,7 @@ def main():
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
         else:
             # "redis-cli info" excute
-            cmd = ['/home/jieun/redis-5.0.2/src/redis-cli', 'info'] 
+            cmd = ['../redis-5.0.2/redis/src/redis-cli', 'info'] 
             fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
             data = fd_popen.readlines() 
 
@@ -105,18 +107,23 @@ def main():
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
 
         if memtier_results:
-            os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
+            os.system("../redis-5.0.2/redis/src/redis-cli shutdown")
         else:
             server_popen.kill()
 
-        # # 캐시 비우기
+        # # empty caches
         cmd = ['sudo', 'echo', '3', '>', '/proc/sys/vm/drop_caches']
         fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
-        time.sleep(3)
+        if first:
+            print("first")
+            time.sleep(10)
+            first=False
+        else:
+            time.sleep(3)
 
-        os.system("rm -rf /home/jieun/redis-logs/appendonly.aof")
-        os.system("rm -rf /home/jieun/redis-logs/dump.rdb")
-        os.system("rm -rf /home/jieun/redis-logs/temp*")
+        os.system("rm -rf ../redis-logs/appendonly.aof")
+        os.system("rm -rf ../redis-logs/dump.rdb")
+        os.system("rm -rf ../redis-logs/temp*")
 
         time.sleep(3)
         del outs
@@ -125,10 +132,10 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as e:
-        os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
-        os.system("rm -rf /home/jieun/redis-logs/appendonly.aof")
-        os.system("rm -rf /home/jieun/redis-logs/dump.rdb")
-        os.system("rm -rf /home/jieun/redis-logs/temp*")
+        os.system("../redis-5.0.2/redis/src/redis-cli shutdown")
+        os.system("rm -rf ../redis-logs/appendonly.aof")
+        os.system("rm -rf ../redis-logs/dump.rdb")
+        os.system("rm -rf ../redis-logs/temp*")
 
         with open('error_log', 'w') as ef:
             print(e)

@@ -6,7 +6,6 @@ except:
     import numpy as np
 import socket
 
-instance_count = int(socket.gethostname().split('-')[-1])
 count_file = 10000
 range_start = 1
 range_end = count_file + 1

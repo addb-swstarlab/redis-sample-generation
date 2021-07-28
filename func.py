@@ -11,6 +11,7 @@ def determine_dict(params_aof, params_rdb, params_activedefrag, params_etc, para
         1 ~ 10000 : AOF
         10001 ~ 20000 : RDB
     '''
+    count_file = 2000
     if idx < count_file/2:
         persis_choice = 'aof'
     else:
@@ -68,7 +69,8 @@ def random_choice(dict):
     return dict
 
 
-def config_generator(conf_file, dict):
+def config_generator(conf_file, dict, mode):
+    value = 0
     for name, list in dict.items():
         if name == 'save':
             save_message_list = params_rdb['save'][2]
@@ -77,11 +79,17 @@ def config_generator(conf_file, dict):
         elif list[0] == "boolean":
             conf_file += ("\n" + name + " " + list[2])
         elif list[0] == 'categorical':
+            if name=='maxmemory-policy' and list[2]=='noeviction' and mode=='heavy':
+                if value and value < 2.5:
+                    conf_file = conf_file.replace("maxmemory " + str(value)+"gb", "maxmemory 2.5gb")
             conf_file += ("\n" + name + " " + list[2])
         elif list[0] == 'numerical':
+            if name=="maxmemory":
+                value = float(list[2][:-2])
             conf_file += ("\n" + name + " " + list[2])
         elif list[0] == 'numerical_range':
             conf_file += ("\n" + name + " " + list[2])
+    
     return conf_file
 
 
