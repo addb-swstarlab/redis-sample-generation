@@ -9,3 +9,4 @@ error_log
 *.txt
 configfile2/
 check.py
+/default_result

@@ -1,9 +1,7 @@
-from func import *
-from metrics import *
+from func import parsing_EM, metrics_name_gen_file, metrics_value_gen_file, IMs_to_dict
+import metrics
 from params import *
 from memtier import dict_cmd
-
-from func import parsingExternalData
 
 import time
 import argparse
@@ -49,14 +47,14 @@ def main():
     ex_f = open(RESULT_EXTERNAL_FILE, MODE)
 
     if args.persistence == 'aof':
-        internal_metrics_list = internal_metrics_list_aof
+        internal_metrics_list = metrics.internal_metrics_list_aof
     else:
-        internal_metrics_list = internal_metrics_list_rdb
+        internal_metrics_list = metrics.internal_metrics_list_rdb
 
 
     if MODE == "w":
-        ResultMetricsName_GeneratorFile(internal_metrics_list, in_f)
-        ResultMetricsName_GeneratorFile(external_metrics_list, ex_f)
+        metrics_name_gen_file(internal_metrics_list, in_f)
+        metrics_name_gen_file(metrics.external_metrics_list, ex_f)
 
     range_start_ = range_start + FILE_LENGTH - 1
     first = True
@@ -78,15 +76,15 @@ def main():
             memtier_results = False
             fd_popen.kill()
 
-        external_list = parsingExternalData(outs)
+        external_list = parsing_EM(outs)
 
-        ResultMetricsValue_GeneratorFile(external_list, external_metrics_list, ex_f)
+        metrics_value_gen_file(external_list, metrics.external_metrics_list, ex_f)
         print(f"---saving {str(i)}th sample results on result_external_{str(instance_count)}")
 
         if not memtier_results:
             nf.write(str(i)+'\n')
             internal_list = ['0'] * len(internal_metrics_list)
-            ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
+            metrics_value_gen_file(internal_list, internal_metrics_list, in_f)
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
         else:
             # "redis-cli info" excute
@@ -94,7 +92,7 @@ def main():
             fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
             data = fd_popen.readlines() 
 
-            internal_dict = InternalMetrics_IntoDict(data)
+            internal_dict = IMs_to_dict(data)
             internal_list = []
 
             for metric in internal_metrics_list:
@@ -103,7 +101,7 @@ def main():
                 else:
                     internal_list.append("")
             
-            ResultMetricsValue_GeneratorFile(internal_list, internal_metrics_list, in_f)
+            metrics_value_gen_file(internal_list, internal_metrics_list, in_f)
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
 
         if memtier_results:

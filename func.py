@@ -113,7 +113,7 @@ def file_generator(filename, dir, filecontent, fileextension):
     f.close()
 
 
-def ResultMetricsName_GeneratorFile(metrics_list, f):
+def metrics_name_gen_file(metrics_list, f):
     col_length = len(metrics_list)
 
     f.write(metrics_list[0])
@@ -122,9 +122,7 @@ def ResultMetricsName_GeneratorFile(metrics_list, f):
     f.write('\n')
 
 
-def ResultMetricsValue_GeneratorFile(result_list, metrics_list, f):
-    col_length = len(metrics_list)
-
+def metrics_value_gen_file(result_list, metrics_list, f):
     for i in range(len(result_list)):
         if i == 0:
             f.write(result_list[0])
@@ -132,7 +130,7 @@ def ResultMetricsValue_GeneratorFile(result_list, metrics_list, f):
         f.write(','+result_list[i])
     f.write('\n')
 
-def ExternalMetrics_IntoList(external_data):
+def EMs_to_list(external_data):
     external_list = []
 
     for data in external_data:
@@ -148,7 +146,7 @@ def ExternalMetrics_IntoList(external_data):
     return external_list
 
 
-def InternalMetrics_IntoDict(internal_data):
+def IMs_to_dict(internal_data):
     dict = {}
 
     keyspace_data = internal_data.pop()
@@ -172,7 +170,7 @@ def InternalMetrics_IntoDict(internal_data):
     
     return dict 
 
-def parsingExternalData(outputs):
+def parsing_EM(outputs):
     if len(outputs) == 0:
         return ['0']*32
     parsedOutput = outputs.decode('utf-8').split("\n")

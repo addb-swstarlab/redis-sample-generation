@@ -1,10 +1,3 @@
-import os
-try:
-    import numpy as np
-except:
-    os.system("pip3 install --user numpy")
-    import numpy as np
-import socket
 
 count_file = 10000
 range_start = 1
