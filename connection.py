@@ -8,20 +8,15 @@ import argparse
 import os, subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--mode", type=str, choices=['light','heavy'], default = 'light', help='diff workload request')
 parser.add_argument("persistence", type=str, choices=['aof','rdb'], default = 'aof', help='Redis persistence')
+parser.add_argument('target', type=int)
 parser.add_argument("path", type=str)
 args = parser.parse_args()
 
-if args.persistence == 'rdb':
-    count_file += 10000
-    range_start += 10000
-    range_end += 10000
-
-
 def main():
-    RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_default_18.csv"
-    RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_default_18.csv"
+    instance_count = args.target
+    RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_GA.csv"
+    RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_GA.csv"
     MODE = "w"
 
     FILE_LENGTH = 1
