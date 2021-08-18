@@ -10,3 +10,5 @@ error_log
 configfile2/
 check.py
 /default_result
+*.conf
+!requirements.txt

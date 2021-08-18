@@ -1,9 +1,8 @@
+import numpy as np
 
-count_file = 10000
-range_start = 1
-range_end = count_file + 1
-# range_start = instance_count * count_file + 1 # 0 * 6250 + 1 = 1
-# range_end = (instance_count + 1) * count_file + 1 # (0 + 1) * 6250 + 1 = 6251
+count_file: int = 10000
+range_start: int = 1
+range_end: int = count_file + 1
 
 params_aof = {
     "appendonly": ["boolean", ["yes", "no"], None],

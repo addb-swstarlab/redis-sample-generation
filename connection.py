@@ -66,7 +66,7 @@ def main():
         fd_popen.kill()
 
     external_list = parsing_EM(outs)
-    metrics_value_gen_file(external_list, metrics.external_metrics_list, ex_f)
+    metrics_value_gen_file(external_list, ex_f)
     print(f"---saving sample results on result_external_default")
 
     if not memtier_results:

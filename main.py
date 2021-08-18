@@ -8,9 +8,9 @@ import argparse
 import os, subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--mode", type=str, choices=['light','heavy'], default = 'light', help='diff workload request')
-parser.add_argument("--persistence", type=str, choices=['aof','rdb'], default = 'aof', help='Redis persistence')
-parser.add_argument("--w", type=int, help='# workload')
+parser.add_argument("--mode", type = str, choices = ['light','heavy'], default = 'light', help = 'diff workload request')
+parser.add_argument("--persistence", type = str, choices = ['aof','rdb'], default = 'aof', help = 'Redis persistence')
+parser.add_argument("--w", type = int, help = '# workload')
 
 args = parser.parse_args()
 
@@ -78,7 +78,7 @@ def main():
 
         external_list = parsing_EM(outs)
 
-        metrics_value_gen_file(external_list, metrics.external_metrics_list, ex_f)
+        metrics_value_gen_file(external_list, ex_f)
         print(f"---saving {str(i)}th sample results on result_external_{str(instance_count)}")
 
         if not memtier_results:

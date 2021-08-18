@@ -1,11 +1,10 @@
-from func import *
+from func import (determine_dict, config_generator, random_choice, file_generator)
 from metrics import *
-from params import *
+from params import (params_aof, params_rdb, params_activedefrag, params_etc)
 import argparse
-import os, subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--mode", type=str, choices=['light','heavy'], default = 'heavy', help='diff workload request')
+parser.add_argument("--mode", type=str, choices=['light', 'heavy'], default = 'heavy', help='diff workload request')
 
 args = parser.parse_args()
 
@@ -20,16 +19,14 @@ while True:
     init_config += line
 f.close()
 
-count_file=2000
+count_file = 2000
 config_list = [init_config for _ in range(count_file)]
 
+params = [params_aof, params_rdb, params_activedefrag, params_etc]
 for i in range(count_file):
     params_dict = {}
-    params_dict = determine_dict(params_aof,params_rdb, params_activedefrag, 
-                                params_etc, params_dict,args.mode, i)
-    # print(f"i={i}\n params_dict={params_dict}\n")
-    config_list[i] = config_generator(config_list[i], random_choice(params_dict),args.mode)
-    # config_list[i] += "\nlogfile "+"'./logfile/logfile"+"%s'" %index_size(i)
+    params_dict = determine_dict(params, params_dict, args.mode, i)
+    config_list[i] = config_generator(config_list[i], random_choice(params_dict), args.mode)
     
 # conf file generate step
 for i in range(count_file):
