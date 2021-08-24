@@ -5,6 +5,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", type=str, choices=['light', 'heavy'], default = 'heavy', help='diff workload request')
+parser.add_argument("--number", type=int, default = 2000)
 
 args = parser.parse_args()
 
@@ -19,7 +20,7 @@ while True:
     init_config += line
 f.close()
 
-count_file = 2000
+count_file = args.number
 config_list = [init_config for _ in range(count_file)]
 
 params = [params_aof, params_rdb, params_activedefrag, params_etc]
@@ -30,5 +31,5 @@ for i in range(count_file):
     
 # conf file generate step
 for i in range(count_file):
-    index = range(1, 2001)
+    index = range(1, args.number+1)
     file_generator("config" + str(index[i]), './configfile2/',config_list[i], "conf")
