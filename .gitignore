@@ -12,3 +12,4 @@ check.py
 /default_result
 *.conf
 !requirements.txt
+configfile/

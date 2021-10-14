@@ -14,12 +14,6 @@ parser.add_argument("--w", type = int, help = '# workload')
 
 args = parser.parse_args()
 
-if args.persistence == 'rdb':
-    count_file += 10000
-    range_start += 10000
-    range_end += 10000
-
-
 def main():
     instance_count = args.w
     RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_" + str(instance_count)+".csv"
@@ -46,10 +40,7 @@ def main():
     in_f = open(RESULT_INTERNAL_FILE, MODE)
     ex_f = open(RESULT_EXTERNAL_FILE, MODE)
 
-    if args.persistence == 'aof':
-        internal_metrics_list = metrics.internal_metrics_list_aof
-    else:
-        internal_metrics_list = metrics.internal_metrics_list_rdb
+    internal_metrics_list = metrics.internal_metrics_list_addb
 
 
     if MODE == "w":
@@ -60,13 +51,25 @@ def main():
     first = True
     for i in range(range_start_, range_end):
         #redis execute
-        connect_redis = ['../redis-5.0.2/redis/src/redis-server','configfile/config{}.conf'.format(str(i))]
+        connect_redis = ['../redis/src/redis-server','configfile/config{}.conf'.format(str(i))]
         server_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
 
-        time.sleep(5)
+        time.sleep(3)
         # memtier_benchmark execute
-        cmd = dict_cmd[instance_count]
-        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        if isinstance(dict_cmd[instance_count][0],list):
+            cmd = dict_cmd[instance_count][0]
+            fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+            outs = []
+            try:
+                outs, _ = fd_popen.communicate(timeout=10000)
+            except subprocess.TimeoutExpired:
+                memtier_results = False
+                fd_popen.kill()
+            cmd = dict_cmd[instance_count][1]
+            fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        else:
+            cmd = dict_cmd[instance_count]
+            fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
         memtier_results = True
         outs = []
@@ -88,7 +91,7 @@ def main():
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
         else:
             # "redis-cli info" excute
-            cmd = ['../redis-5.0.2/redis/src/redis-cli', 'info'] 
+            cmd = ['../redis/src/redis-cli', 'info'] 
             fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
             data = fd_popen.readlines() 
 
@@ -101,11 +104,11 @@ def main():
                 else:
                     internal_list.append("")
             
-            metrics_value_gen_file(internal_list, internal_metrics_list, in_f)
+            metrics_value_gen_file(internal_list, in_f)
             print(f"---saving {str(i)}th sample results on result_internal_{str(instance_count)}")
 
         if memtier_results:
-            os.system("../redis-5.0.2/redis/src/redis-cli shutdown")
+            os.system("../redis/src/redis-cli shutdown")
         else:
             server_popen.kill()
 
@@ -119,10 +122,6 @@ def main():
         else:
             time.sleep(3)
 
-        os.system("rm -rf ../redis-logs/appendonly.aof")
-        os.system("rm -rf ../redis-logs/dump.rdb")
-        os.system("rm -rf ../redis-logs/temp*")
-
         time.sleep(3)
         del outs
 
@@ -130,11 +129,7 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as e:
-        os.system("../redis-5.0.2/redis/src/redis-cli shutdown")
-        os.system("rm -rf ../redis-logs/appendonly.aof")
-        os.system("rm -rf ../redis-logs/dump.rdb")
-        os.system("rm -rf ../redis-logs/temp*")
-
+        os.system("../redis/src/redis-cli shutdown")
         with open('error_log', 'w') as ef:
             print(e)
             ef.write(str(e))

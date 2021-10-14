@@ -1,49 +1,16 @@
 from io import TextIOWrapper
 import random
 import os
-from params import params_rdb, count_file, light_params_maxmemory, heavy_params_maxmemory
+from params import params_addb, count_file
 
 
 def determine_dict(params: list, params_dict: dict, mode: str, idx: int) -> dict:
-    params_aof, params_rdb, params_activedefrag, params_etc = params
-    params_dict = params_etc.copy()
-
-    if idx < count_file/2:
-        persis_choice = 'aof'
-    else:
-        persis_choice = 'rdb'
-
-    if persis_choice == 'aof':  ## chocie AOF
-        params_aof['appendonly'][2] = 'yes'
-        params_dict.update(params_aof)
-
-    elif persis_choice == 'rdb':  ## choice RDB
-        save_message_list = []
-        for i in range(params_rdb['save'][1][0]):
-            seconds_range: int = params_rdb['save'][1][i+1][0]
-            changes_range: int = params_rdb['save'][1][i+1][1]
-            seconds = random.choice(seconds_range)
-            changes = random.choice(changes_range)
-            save_message = str(seconds)+' '+str(changes)
-            save_message_list.append(save_message)
-
-        params_rdb['save'][2] = save_message_list
-        params_dict.update(params_rdb)
-
-    activedefrag_choice = random.choice(['yes', 'no'])
-    if activedefrag_choice == 'yes':
-        params_activedefrag['activedefrag'][2] = 'yes'
-        params_dict.update(params_activedefrag)
-
-    if mode == "light":
-        params_dict.update(light_params_maxmemory)
-    elif mode == "heavy":
-        params_dict.update(heavy_params_maxmemory)
-
+    params_addb = params
+    params_dict.update(params_addb[0])
     return params_dict
 
-def random_choice(dict: dict) -> dict:
-    for name, list in dict.items():
+def random_choice(dicts: dict) -> dict:
+    for name, list in dicts.items():
         if name == "appendonly":
             continue
         elif name == 'save':
@@ -58,7 +25,7 @@ def random_choice(dict: dict) -> dict:
            list[2] = random.choice(list[1])
         elif list[0] == 'numerical_range':
             list[2] = str(random.randint(list[1][0], list[1][1]))
-    return dict
+    return dicts
 
 def config_generator(conf_file: str, dict_: dict, mode: str) -> str:
     value = 0
