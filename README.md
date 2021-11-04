@@ -2,7 +2,7 @@
 
 ## 디렉토리 구성
 * confile : config 파일 
-* logfile :  파일
+* logfile : log 파일
 
 ## 소스 코드 구성
 * main.py
