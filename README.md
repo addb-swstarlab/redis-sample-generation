@@ -14,6 +14,7 @@
 * init_config.conf : 기존 redis.conf 파일에서 주석과 랜덤적용할 파라미터 부분 제거
 * memtier.py : memtier_benchmark 실행 cmd command
 * gen_config.py : redis config 생성
+* connection.py : GA config에 benchmark 적용
 ---
 
 ## 실행 방법
