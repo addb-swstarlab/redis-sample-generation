@@ -3,6 +3,11 @@ from metrics import *
 from params import (params_aof, params_rdb, params_activedefrag, params_etc)
 import argparse
 
+'''
+mode: maxmemory params mode
+number: 생성할 config number
+'''
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", type=str, choices=['light', 'heavy'], default = 'heavy', help='diff workload request')
 parser.add_argument("--number", type=int, default = 2000)
