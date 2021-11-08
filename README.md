@@ -6,7 +6,7 @@
 
 ## 소스 코드 구성
 * main.py
-* func.py 
+* func.py : functions list
 * metrics.py : metrics의 list 요소로 external_metrics_list, internal_metrics_list_rdb, internal_metrics_list_aof 로 구성
 * params.py : 각 parameter들에 대한 선언
 
