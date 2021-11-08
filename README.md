@@ -6,10 +6,10 @@
 
 ## 소스 코드 구성
 * main.py
-* func.py : functions list
+* func.py : 각 functions 정의
 * metrics.py : metrics의 list 요소로 external_metrics_list, internal_metrics_list_rdb, internal_metrics_list_aof 로 구성
-* params.py : 각 parameter들에 대한 선언
-
+* params.py : 각 parameter 정의
+* 
 ## 기타 구성 
 * init_config.conf : 기존 redis.conf 파일에서 주석과 랜덤적용할 파라미터 부분 제거
 
