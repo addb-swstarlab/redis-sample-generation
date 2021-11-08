@@ -7,6 +7,13 @@ import time
 import argparse
 import os, subprocess
 
+"""
+mode: maxmemory params mode (params.py)
+persistence
+ - AOF: 명령 수행마다 기록
+ - RDB: Snapshot type
+"""
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", type = str, choices = ['light','heavy'], default = 'light', help = 'diff workload request')
 parser.add_argument("--persistence", type = str, choices = ['aof','rdb'], default = 'aof', help = 'Redis persistence')
