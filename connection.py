@@ -28,6 +28,7 @@ def main():
 
     FILE_LENGTH = 1
     '''
+        비정상 종료로 인하여 파일이 존재하는 경우, 존재하는 파일로 추가
         if the file exists because of abnormal shutdown, appending with exist files
         no file: FILE_LENGTH = 1
         existed file : FILE_LENGTH > 1
