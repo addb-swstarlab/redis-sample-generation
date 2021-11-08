@@ -12,7 +12,7 @@ args = parser.parse_args()
 # original conf file copy
 init_config = ""
 
-# readline_all.py
+# init_config.conf를 모두 읽어 config 초기화
 f = open("init_config.conf", 'r')
 while True:
     line = f.readline()
