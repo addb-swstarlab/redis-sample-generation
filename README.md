@@ -8,7 +8,7 @@
 * main.py
 * func.py 
 * metrics.py : metrics의 list 요소로 external_metrics_list, internal_metrics_list_rdb, internal_metrics_list_aof 로 구성
-* params.py
+* params.py : 각 parameter들에 대한 선언
 
 ## 기타 구성 
 * init_config.conf : 기존 redis.conf 파일에서 주석과 랜덤적용할 파라미터 부분 제거
