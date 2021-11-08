@@ -5,10 +5,10 @@ from params import params_rdb, count_file, light_params_maxmemory, heavy_params_
 
 '''
 gen_config function
- - file_generator
  - determine_dict
  - random_choice
  - config_generator
+ - file_generator
 '''
 
 def determine_dict(params: list, params_dict: dict, mode: str, idx: int) -> dict:
