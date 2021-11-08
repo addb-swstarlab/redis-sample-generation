@@ -3,6 +3,13 @@ import random
 import os
 from params import params_rdb, count_file, light_params_maxmemory, heavy_params_maxmemory
 
+'''
+gen_config function
+ - file_generator
+ - determine_dict
+ - random_choice
+ - config_generator
+'''
 
 def determine_dict(params: list, params_dict: dict, mode: str, idx: int) -> dict:
     params_aof, params_rdb, params_activedefrag, params_etc = params
