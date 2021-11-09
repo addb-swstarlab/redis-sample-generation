@@ -21,6 +21,9 @@ parser.add_argument("path", type=str)
 args = parser.parse_args()
 
 def main():
+    '''
+    GA config에 benchmark를 적용
+    '''
     instance_count = args.target
     RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_GA.csv"
     RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_GA.csv"
