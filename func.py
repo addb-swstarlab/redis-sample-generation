@@ -11,6 +11,7 @@ gen_config function
  - file_generator
 '''
 
+# parameters dict 
 def determine_dict(params: list, params_dict: dict, mode: str, idx: int) -> dict:
     params_aof, params_rdb, params_activedefrag, params_etc = params
     params_dict = params_etc.copy()
