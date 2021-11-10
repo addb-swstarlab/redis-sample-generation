@@ -168,6 +168,7 @@ def IMs_to_dict(internal_data: list) -> dict:
     
     return dict 
 
+# Parsing External Metrics
 def parsing_EM(outputs: bytes) -> list:
     if len(outputs) == 0:
         return ['0']*32
