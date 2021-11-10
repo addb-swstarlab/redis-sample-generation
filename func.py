@@ -127,6 +127,7 @@ def metrics_value_gen_file(result_list: list, f: TextIOWrapper):
         f.write(','+result_list[i])
     f.write('\n')
 
+# External Metrics to List
 def EMs_to_list(external_data):
     external_list = []
 
