@@ -1,6 +1,9 @@
 import numpy as np
 
-count_file: int = 5000
+#count_file: int = 5000
+
+# evaluate default configuration
+count_file: int = 5
 range_start: int = 1
 range_end: int = count_file + 1
 

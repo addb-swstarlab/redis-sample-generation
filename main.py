@@ -16,8 +16,8 @@ args = parser.parse_args()
 
 def main():
     instance_count = args.w
-    RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_" + str(instance_count)+".csv"
-    RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_" + str(instance_count)+".csv"
+    RESULT_INTERNAL_FILE = "result_" + args.persistence + "_internal_" + str(instance_count)+"_default.csv"
+    RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_" + str(instance_count)+"_default.csv"
     MODE = "w"
 
     FILE_LENGTH = 1
@@ -51,7 +51,10 @@ def main():
     first = True
     for i in range(range_start_, range_end):
         #redis execute
-        connect_redis = ['../redis/src/redis-server','configfile/config{}.conf'.format(str(i))]
+#        connect_redis = ['../redis/src/redis-server','configfile/config{}.conf'.format(str(i))]
+
+	# evaluate default configuration
+        connect_redis = ['../redis/src/redis-server', './redis.conf']
         server_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
 
         time.sleep(3)
@@ -122,6 +125,10 @@ def main():
         else:
             time.sleep(3)
 
+        os.system("rm -rf ../redis-logs/appendonly.aof")
+        os.system("rm -rf ../redis-logs/dump.rdb")
+        os.system("rm -rf ../redis-logs/temp*")
+
         time.sleep(3)
         del outs
 
@@ -130,6 +137,9 @@ if __name__ == '__main__':
         main()
     except Exception as e:
         os.system("../redis/src/redis-cli shutdown")
+        os.system("rm -rf ../redis-logs/appendonly.aof")
+        os.system("rm -rf ../redis-logs/dump.rdb")
+        os.system("rm -rf ../redis-logs/temp*")
         with open('error_log', 'w') as ef:
             print(e)
             ef.write(str(e))

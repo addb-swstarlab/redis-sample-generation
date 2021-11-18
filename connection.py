@@ -19,43 +19,35 @@ def main():
     RESULT_EXTERNAL_FILE = "result_" + args.persistence + "_external_GA.csv"
     MODE = "w"
 
-    FILE_LENGTH = 1
-    '''
-        if the file exists because of abnormal shutdown, appending with exist files
-        no file: FILE_LENGTH = 1
-        existed file : FILE_LENGTH > 1
-    '''
-    if os.path.isfile(RESULT_EXTERNAL_FILE) and os.path.isfile(RESULT_INTERNAL_FILE):
-        print('Exist Those Files')
-        MODE = "a"
-        in_rf = open(RESULT_INTERNAL_FILE, "r")
-        ex_rf = open(RESULT_EXTERNAL_FILE, "r")
-        FILE_LENGTH = len(in_rf.readlines())
-        assert FILE_LENGTH == len(ex_rf.readlines())
-        in_rf.close()
-        ex_rf.close()
-
     in_f = open(RESULT_INTERNAL_FILE, MODE)
     ex_f = open(RESULT_EXTERNAL_FILE, MODE)
 
-    if args.persistence == 'aof':
-        internal_metrics_list = metrics.internal_metrics_list_aof
-    else:
-        internal_metrics_list = metrics.internal_metrics_list_rdb
-
+    internal_metrics_list = metrics.internal_metrics_list_addb
 
     if MODE == "w":
         metrics_name_gen_file(internal_metrics_list, in_f)
         metrics_name_gen_file(metrics.external_metrics_list, ex_f)
 
     #redis 서버 실행
-    connect_redis = ['/home/jieun/redis-5.0.2/src/redis-server', args.path]
+    connect_redis = ['/home/juyeon/sw_sample/redis/src/redis-server', args.path]
     server_popen = subprocess.Popen(connect_redis, stdout=subprocess.PIPE)
 
     time.sleep(5)
     # memtier_benchmark 실행
-    cmd = dict_cmd[instance_count]
-    fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    if isinstance(dict_cmd[instance_count][0],list):
+        cmd = dict_cmd[instance_count][0]
+        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        outs = []
+        try:
+            outs, _ = fd_popen.communicate(timeout=10000)
+        except subprocess.TimeoutExpired:
+            memtier_results = False
+            fd_popen.kill()
+        cmd = dict_cmd[instance_count][1]
+        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    else:
+        cmd = dict_cmd[instance_count]
+        fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
     memtier_results = True
     outs = []
@@ -66,6 +58,7 @@ def main():
         fd_popen.kill()
 
     external_list = parsing_EM(outs)
+
     metrics_value_gen_file(external_list, ex_f)
     print(f"---saving sample results on result_external_default")
 
@@ -75,7 +68,7 @@ def main():
         print(f"---saving th sample results on result_internal_default")
     else:
         # "redis-cli info" excute
-        cmd = ['/home/jieun/redis-5.0.2/src/redis-cli', 'info'] 
+        cmd = ['/home/juyeon/sw_sample/redis/src/redis-cli', 'info'] 
         fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout  
         data = fd_popen.readlines() 
 
@@ -92,7 +85,7 @@ def main():
         print(f"---saving  sample results on result_internal_default")
 
     if memtier_results:
-        os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
+        os.system("../redis/src/redis-cli shutdown")
     else:
         server_popen.kill()
 
@@ -101,9 +94,9 @@ def main():
     fd_popen = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout
     time.sleep(3)
 
-    os.system("rm -rf /home/jieun/redis-logs/appendonly.aof")
-    os.system("rm -rf /home/jieun/redis-logs/dump.rdb")
-    os.system("rm -rf /home/jieun/redis-logs/temp*")
+    # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/appendonly.aof")
+    # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/dump.rdb")
+    # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/temp*")
 
     time.sleep(3)
     del outs
@@ -112,10 +105,10 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as e:
-        os.system("/home/jieun/redis-5.0.2/src/redis-cli shutdown")
-        os.system("rm -rf /home/jieun/redis-logs/appendonly.aof")
-        os.system("rm -rf /home/jieun/redis-logs/dump.rdb")
-        os.system("rm -rf /home/jieun/redis-logs/temp*")
+        os.system("../redis/src/redis-cli shutdown")
+        # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/appendonly.aof")
+        # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/dump.rdb")
+        # os.system("rm -rf /home/juyeon/sw_sample/redis-logs/temp*")
 
         with open('error_log', 'w') as ef:
             print(e)
