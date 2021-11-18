@@ -1,5 +1,4 @@
 from func import (determine_dict, config_generator, random_choice, file_generator)
-from metrics import *
 from params import (params_aof, params_rdb, params_activedefrag, params_etc)
 import argparse
 

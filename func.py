@@ -91,18 +91,6 @@ def config_generator(conf_file: str, dict_: dict, mode: str) -> str:
     
     return conf_file
 
-#file indexing
-def index_size(index):
-  size = len(str(count_file))
-  index_str = str(index)
-  diff = size - len(index_str)
-  index_value = ''
-  for _ in range(diff):
-    index_value += '0'
-  index_value += index_str
-  
-  return index_value
-
 def file_generator(file_name: str, dir: str, file_content: str, file_extension: str):
     if not os.path.exists(dir):
         os.mkdir(dir)
@@ -126,22 +114,6 @@ def metrics_value_gen_file(result_list: list, f: TextIOWrapper):
             continue
         f.write(','+result_list[i])
     f.write('\n')
-
-# External Metrics to List
-def EMs_to_list(external_data):
-    external_list = []
-
-    for data in external_data:
-        data = data.decode('utf-8')
-        list_ = data.split(' ')
-        list_ = ' '.join(list_).split()
-    
-        for i in range(1, len(list_)):  # list = ['Sets', , , ...]
-            external_list.append(list_[i]) # 문자열
-
-    external_list = [i.replace('---','') for i in external_list]
-    
-    return external_list
 
 # Internal Metrics to Dict
 def IMs_to_dict(internal_data: list) -> dict:
